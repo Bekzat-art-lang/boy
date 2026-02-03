@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>ALT Университет | AI Көмекші</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0047ab, #007bff);
+      color: white;
+      padding: 6vh 5vw;
+      text-align: center;
+    }
+
+    section {
+      max-width: 90%;
+      margin: 4vh auto;
+      background: white;
+      padding: 4vh 4vw;
+      border-radius: 2vh;
+      box-shadow: 0 2vh 4vh rgba(0,0,0,0.08);
+    }
+
+    h2 { color: #0047ab; }
+
+    /* ===== AI BUTTON ===== */
+    .ai-button {
+      position: fixed;
+      bottom: 4vh;
+      right: 4vw;
+      width: 10vw;
+      height: 10vw;
+      max-width: 70px;
+      max-height: 70px;
+      min-width: 55px;
+      min-height: 55px;
+      border-radius: 50%;
+      background: #007bff;
+      color: white;
+      font-size: 1.8em;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2vh 4vh rgba(0,0,0,0.25);
+      z-index: 1000;
+    }
+
+    /* ===== CHAT WINDOW ===== */
+    .chat-window {
+      position: fixed;
+      bottom: 16vh;
+      right: 4vw;
+      width: 90vw;
+      height: 65vh;
+      max-width: 360px;
+      max-height: 500px;
+      background: white;
+      border-radius: 3vh;
+      box-shadow: 0 3vh 5vh rgba(0,0,0,0.25);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    .chat-header {
+      background: #007bff;
+      color: white;
+      padding: 2vh;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 2vh;
+      overflow-y: auto;
+      font-size: 0.9em;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 2vh;
+      border: none;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .chat-input button {
+      background: #007bff;
+      border: none;
+      color: white;
+      width: 18%;
+      cursor: pointer;
+      font-size: 1.2em;
+    }
+
+    .user { text-align: right; margin-bottom: 1vh; font-weight: bold; }
+    .bot  { text-align: left;  margin-bottom: 1vh; color: #007bff; }
+
+    @media (min-width: 768px) {
+      .chat-window { width: 28vw; height: 60vh; }
+      .ai-button { width: 5vw; height: 5vw; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>АЛТ Университетіне түсу</h1>
+  <p>AI көмекшімен барлық ақпарат</p>
+</header>
+
+<section>
+  <h2>🎓 Университет туралы</h2>
+  <p>
+    АЛТ университеті – авиация, IT, инженерия және техникалық
+    мамандықтар бойынша білім береді.
+  </p>
+
+  <h2>📄 Қабылдау талаптары</h2>
+  <ul>
+    <li>ҰБТ сертификаты</li>
+    <li>Аттестат немесе диплом</li>
+    <li>Жеке куәлік</li>
+    <li>Медициналық анықтама</li>
+  </ul>
+
+  <h2>🤖 AI көмекші</h2>
+  <p>
+    Төменгі оң жақтағы батырманы басып,
+    мамандық, балл, грант туралы сұраңыз.
+  </p>
+</section>
+
+<!-- AI BUTTON -->
+<button class="ai-button" onclick="toggleChat()">🤖</button>
+
+<!-- CHAT -->
+<div class="chat-window" id="chat">
+  <div class="chat-header">ALT AI Көмекші</div>
+  <div class="chat-messages" id="messages"></div>
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Сұрағыңызды жазыңыз...">
+    <button onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+  const webhookURL = "https://hook.eu1.make.com/494yvopyy90v66rhjcq5m21i6anrf3ns";
+
+  function toggleChat() {
+    const chat = document.getElementById("chat");
+    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+  }
+
+  function addMessage(text, cls) {
+    const div = document.createElement("div");
+    div.className = cls;
+    div.textContent = text;
+    const messages = document.getElementById("messages");
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    try {
+      const res = await fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      addMessage(data.reply || "Жауап табылмады", "bot");
+
+    } catch (e) {
+      addMessage("Сервермен байланыс жоқ", "bot");
+    }
+  }
+</script>
+
+</body>
+</html>
